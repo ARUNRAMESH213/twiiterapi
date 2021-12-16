@@ -8,8 +8,8 @@ exports.up = function(knex) {
         .notNullable()
         .references("users.id")
         .onDelete("CASCADE");
-        t.integer("connect_id").notnullable()
-        t.unique("users.id","connect_id");
+        t.integer("connect_id").notNullable()
+        t.unique("user_id","connect_id");
     })
 
     

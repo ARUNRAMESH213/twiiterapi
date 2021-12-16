@@ -10,7 +10,7 @@ exports.up = function (knex) {
       .notNullable()
       .references("tweets.id")
       .onDelete("CASCADE");
-    t.timestamps();
+  
     t.string("message").notNullable();
     t.timestamps();
   });

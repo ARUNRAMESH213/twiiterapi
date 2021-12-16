@@ -5,7 +5,7 @@ exports.up = function (knex) {
     p.string("password").notNullable().unique();
     p.string("name").notNullable();
     p.string("mail_id").notNullable().unique();
-    p.string("D.O.B").notNullable();
+    p.string("dob").notNullable();
     p.timestamps();
   });
 };
