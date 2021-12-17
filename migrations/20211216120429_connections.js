@@ -9,7 +9,7 @@ exports.up = function(knex) {
         .references("users.id")
         .onDelete("CASCADE");
         t.integer("connect_id").notNullable()
-        t.unique("user_id","connect_id");
+        t.unique(["user_id","connect_id"]);
     })
 
     

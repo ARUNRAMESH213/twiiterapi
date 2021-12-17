@@ -1,7 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const session = require("express-session");
-const userRouter = require("./controllers/users.controllers");
+const userRouter = require("./controllers/users_controllers");
+const followRouter = require("./controllers/follow_controller");
 const app = express();
 app.use(morgan("combined"));
 app.use(
@@ -24,5 +25,7 @@ app.use(async function (req, res, next) {
 });
 app.use(express.json());
 app.use("/api/v1/auth", userRouter);
+app.use("/api/v1", userRouter);
+app.use("/api/v1/follow", followRouter);
 
 app.listen(3000);
