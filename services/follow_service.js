@@ -7,6 +7,7 @@ async function createFollow(id, followId) {
     user_id: id,
     connect_id: followId,
   });
+  console.log("666666^^^^^^^^^",createdId)
   return createdId;
 }
 
