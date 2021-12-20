@@ -6,6 +6,7 @@ exports.up = function (knex) {
       .notNullable()
       .references("users.id")
       .onDelete("CASCADE");
+      t.string("message").notNullable();
 
     t.timestamps();
   });

@@ -3,6 +3,8 @@ const morgan = require("morgan");
 const session = require("express-session");
 const userRouter = require("./controllers/users_controllers");
 const followRouter = require("./controllers/follow_controller");
+const followerRouter=require("./controllers/followers_controller")
+const tweetsRouter=require("./controllers/tweets_controller")
 const app = express();
 app.use(morgan("combined"));
 app.use(
@@ -27,5 +29,7 @@ app.use(express.json());
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1", userRouter);
 app.use("/api/v1/follow", followRouter);
+app.use("/api/v1/followers", followerRouter);
+app.use("/api/v1/tweets",tweetsRouter)
 
 app.listen(3000);

@@ -5,12 +5,12 @@ const userServices = require("../services/user_services");
 
 app.post("/register", async (req, res) => {
   try {
-    console.log("suisyyyhgh",req.body)
+    console.log("suisyyyhgh", req.body);
     const user = await userServices.createUser(req.body);
 
     res.send(user);
 
-     console.log("))))))))(((((((((((",user)
+    console.log("))))))))(((((((((((", user);
   } catch (err) {
     if ((err = err.no === 19)) {
       console.log(err);
@@ -56,7 +56,7 @@ app.put("/myinfo", isloggedIn, async (req, res) => {
   try {
     console.log(req.user);
     const user = req.body;
-    console.log("))))))))----999999999", user);
+    // console.log("))))))))----999999999", user);
     let updateData = {};
     if (user.name) updateData.name = user.name;
     if (user.mail_id) updateData.mail_id = user.mail_id;
@@ -75,5 +75,12 @@ app.put("/myinfo", isloggedIn, async (req, res) => {
     }
   }
 });
+
+app.delete("/myinfo",isloggedIn,async(req,res)=>{
+  const deleted=await userServices.deleteUser(req.user.id)
+  res.send(deleted)
+
+
+})
 
 module.exports = app;
