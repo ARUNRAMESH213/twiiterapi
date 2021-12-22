@@ -11,6 +11,9 @@ exports.up = function (knex) {
       .references("tweets.id")
       .onDelete("CASCADE");
     t.timestamps();
+    t.unique(["user_id","tweet_id"]);
+    
+
   });
 };
 

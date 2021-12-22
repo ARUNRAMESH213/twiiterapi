@@ -38,13 +38,13 @@ async function getTweetById(tweetId) {
   return tweet;
 }
 
-async function deleteTweetById(id){
+async function deleteTweetById(id,userId){
     const deleted=await getTweetById(id);
     if(!deleted){
         return null
     }
 
-await knex("tweets").del().where("id",id);
+await knex("tweets").del().where({"id":id,"user_id":userId});
  return deleted;
     
 }

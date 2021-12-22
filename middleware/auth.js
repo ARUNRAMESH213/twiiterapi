@@ -14,14 +14,15 @@ async function isOwnerOfId(req, res, next) {
     .select("tweets.*")
     .leftJoin("connection", "tweets.user_id", "=", "connection.connect_id")
     .where({ "tweets.id": req.params.id, "tweets.user_id": req.user.id })
-    .orWhere({"tweets.id": req.params.id, "connection.user_id": req.user.id })
+    .orWhere({ "tweets.id": req.params.id, "connection.user_id": req.user.id })
     .first();
 
-  console.log("^^^^^^^^^^^^^^", isOwner);
+  
   if (isOwner) {
     next();
     return;
   }
+  res.status(404).send({ message: "you are not following the tweet owner" });
 }
 module.exports = {
   isloggedIn,

@@ -16,7 +16,7 @@ app.post("/register", async (req, res) => {
       console.log(err);
       res.status(400).send({ message: "useranme already exists" });
     } else {
-      res.status(500).send({ message: "internall server error" });
+      res.status(500).send({ message: "internall server error or gmail_id exists" });
     }
   }
 });
@@ -35,8 +35,17 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/myinfo", isloggedIn, async (req, res) => {
+app.get("/myinfo",isloggedIn, async (req, res) => {
   const user = await userServices.getUser(req.user.id);
+  if (user) {
+    res.send(user);
+    return;
+  }
+});
+
+
+app.get("/users",isloggedIn, async (req, res) => {
+  const user = await userServices.getUserAll();
   if (user) {
     res.send(user);
     return;
@@ -51,6 +60,10 @@ app.get("/myinfo/:id", isloggedIn, async (req, res) => {
   }
   res.status(401).send({ message: "user doesn't exists" });
 });
+
+
+
+
 
 app.put("/myinfo", isloggedIn, async (req, res) => {
   try {
@@ -83,4 +96,9 @@ app.delete("/myinfo",isloggedIn,async(req,res)=>{
 
 })
 
+
+
+app.get("/allUsers",async(req,res)=>{
+  const allUsers=await userServices.getAllusers
+})
 module.exports = app;

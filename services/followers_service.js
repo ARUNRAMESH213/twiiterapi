@@ -2,6 +2,7 @@ const knex=require("../db");
 const { getUserById } = require("./user_services");
 
 
+
 async function getFollowers(id) {
     const followers = await knex("connection")
       .leftJoin("profile", "connection.connect_id", "=", "profile.id")

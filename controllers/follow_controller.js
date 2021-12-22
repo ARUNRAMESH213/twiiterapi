@@ -13,6 +13,12 @@ app.get("/", isloggedIn, async (req, res) => {
   res.send(followingData);
 });
 
+
+
+
+
+
+
 app.post("/", isloggedIn, async (req, res) => {
   const [id, followId] = [req.user.id, Number(req.body.follow_id)];
   if (id === followId) {
@@ -34,7 +40,7 @@ app.post("/", isloggedIn, async (req, res) => {
       .send({ id: follow, message: "requested id following success" });
   } catch (err) {
     console.log(err);
-    res.status(404).send({ message: "requested follow failed" });
+    res.status(404).send({ message: "requested follow failed or already following" });
   }
 });
 

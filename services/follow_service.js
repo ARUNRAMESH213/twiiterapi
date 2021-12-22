@@ -1,13 +1,11 @@
-const res = require("express/lib/response");
 const knex = require("../db");
-const { getUserById } = require("./user_services");
+const userService=require("./user_services")
 
 async function createFollow(id, followId) {
   const [createdId] = await knex("connection").insert({
     user_id: id,
     connect_id: followId,
   });
-  console.log("666666^^^^^^^^^",createdId)
   return createdId;
 }
 
@@ -18,7 +16,9 @@ async function getFollowing(id) {
     .where("user_id", id);
 
   for (let following of followingData) {
-    following.connect_id_data = await getUserById(following.connect_id);
+    following.connect_id_data = await userService.getUserById(
+      following.connect_id
+    );
   }
   if (!followingData) {
     return null;
@@ -52,19 +52,19 @@ async function getFollowingById(id, followingId) {
     return null;
   }
 
-  following.connectId_data = await getUserById(following.connect_id);
+  following.connectId_data = await userServices.getUserById (following.connect_id);
 
   return following;
 }
 
-async function deleteFollowing(id,deleteId) {
-  console.log("--------------",id)
-  const deleted = await getFollowingById(id,deleteId);
+async function deleteFollowing(id, deleteId) {
+  
+  const deleted = await getFollowingById(id, deleteId);
   if (!deleted) {
     return null;
   }
-  console.log(")))))))))))---",deleted)
-  await knex("connection").del().where({"user_id":id,"connect_id": deleteId});
+  console.log(")))))))))))---", deleted);
+  await knex("connection").del().where({ user_id: id, connect_id: deleteId });
   return deleted;
 }
 module.exports = {
