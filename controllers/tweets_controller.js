@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express.Router();
 const tweetsServices = require("../services/tweets_services");
-const { isloggedIn, isOwnerOfId } = require("../middleware/auth");
+const { isloggedIn, isOwnerOfId, jwtAuthentication } = require("../middleware/auth");
 
-app.post("/", isloggedIn, async (req, res) => {
+app.post("/",jwtAuthentication, isloggedIn, async (req, res) => {
   const tweets = await tweetsServices.createTweets(
     Number(req.user.id),
     req.body
@@ -11,7 +11,7 @@ app.post("/", isloggedIn, async (req, res) => {
   res.status(201).send(tweets);
 });
 
-app.get("/", isloggedIn, async (req, res) => {
+app.get("/",jwtAuthentication, isloggedIn, async (req, res) => {
   const tweets = await tweetsServices.getAllTweets(req.user.id);
   if (!tweets) {
     res.send({ message: "there is no tweets" });
@@ -19,7 +19,7 @@ app.get("/", isloggedIn, async (req, res) => {
   res.send(tweets);
 });
 
-app.get("/:id", isloggedIn, isOwnerOfId, async (req, res) => {
+app.get("/:id",jwtAuthentication, isloggedIn, isOwnerOfId, async (req, res) => {
   const tweets = await tweetsServices.getTweetById(req.params.id);
   if (!tweets) {
     res.send({ message: "id doesnt exist" });
@@ -27,7 +27,7 @@ app.get("/:id", isloggedIn, isOwnerOfId, async (req, res) => {
   res.send(tweets);
 });
 
-app.delete("/:id", isloggedIn, isOwnerOfId, async (req, res) => {
+app.delete("/:id",jwtAuthentication, isloggedIn, isOwnerOfId, async (req, res) => {
   const tweets = await tweetsServices.deleteTweetById(req.params.id);
   if (!tweets) {
     res.send({ message: "id doesnt exist" });

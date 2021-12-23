@@ -1,12 +1,15 @@
 const express = require("express");
-const { isloggedIn } = require("../middleware/auth");
+const { isloggedIn, jwtAuthentication } = require("../middleware/auth");
 const app = express.Router();
 const userServices = require("../services/user_services");
+const jwt=require("jsonwebtoken")
+const bcrypt=require("bcrypt")
 
 app.post("/register", async (req, res) => {
   try {
-    console.log("suisyyyhgh", req.body);
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
     const user = await userServices.createUser(req.body);
+    delete user.password;
 
     res.send(user);
 
@@ -16,7 +19,10 @@ app.post("/register", async (req, res) => {
       console.log(err);
       res.status(400).send({ message: "useranme already exists" });
     } else {
-      res.status(500).send({ message: "internall server error or gmail_id exists" });
+      console.log(err);
+      res
+        .status(500)
+        .send({ message: "internall server error or gmail_id exists" });
     }
   }
 });
@@ -35,16 +41,31 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/myinfo",isloggedIn, async (req, res) => {
+app.post("/token", async (req, res) => {
+  const user = await userServices.logInUser(
+    req.body.username,
+    req.body.password
+  );
+
+  if (user) {
+    const token = jwt.sign({ userId: user.id }, "secret", { expiresIn: "1d" });
+      req.session.user = user;/* here we ares receiving both token and cookie */
+    res.send({ message: "logged in succesfully", token });
+  } else {
+    res.status(401).send({ message: "invalid username password" });
+  }
+});
+
+app.get("/myinfo", jwtAuthentication, isloggedIn, async (req, res) => {
   const user = await userServices.getUser(req.user.id);
+  
   if (user) {
     res.send(user);
     return;
   }
 });
 
-
-app.get("/users",isloggedIn, async (req, res) => {
+app.get("/users", jwtAuthentication, isloggedIn, async (req, res) => {
   const user = await userServices.getUserAll();
   if (user) {
     res.send(user);
@@ -52,20 +73,17 @@ app.get("/users",isloggedIn, async (req, res) => {
   }
 });
 
-app.get("/myinfo/:id", isloggedIn, async (req, res) => {
+app.get("/myinfo/:id",jwtAuthentication, isloggedIn, async (req, res) => {
   const user = await userServices.getUserById(req.params.id);
   if (user) {
     res.send(user);
+    
     return;
   }
   res.status(401).send({ message: "user doesn't exists" });
 });
 
-
-
-
-
-app.put("/myinfo", isloggedIn, async (req, res) => {
+app.put("/myinfo", jwtAuthentication, isloggedIn, async (req, res) => {
   try {
     console.log(req.user);
     const user = req.body;
@@ -89,16 +107,12 @@ app.put("/myinfo", isloggedIn, async (req, res) => {
   }
 });
 
-app.delete("/myinfo",isloggedIn,async(req,res)=>{
-  const deleted=await userServices.deleteUser(req.user.id)
-  res.send(deleted)
+app.delete("/myinfo", jwtAuthentication, isloggedIn, async (req, res) => {
+  const deleted = await userServices.deleteUser(req.user.id);
+  res.send(deleted);
+});
 
-
-})
-
-
-
-app.get("/allUsers",async(req,res)=>{
-  const allUsers=await userServices.getAllusers
-})
+app.get("/allUsers", async (req, res) => {
+  const allUsers = await userServices.getAllusers;
+});
 module.exports = app;

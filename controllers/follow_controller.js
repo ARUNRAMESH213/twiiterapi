@@ -2,9 +2,9 @@ const express = require("express");
 const app = express.Router();
 const followServices = require("../services/follow_service");
 const userServices = require("../services/user_services");
-const { isloggedIn } = require("../middleware/auth");
+const { isloggedIn, jwtAuthentication } = require("../middleware/auth");
 
-app.get("/", isloggedIn, async (req, res) => {
+app.get("/",jwtAuthentication, isloggedIn, async (req, res) => {
   const followingData = await followServices.getFollowing(req.user.id);
   if (!followingData) {
     res.send({ message: "id doesn't exist" });
@@ -19,7 +19,7 @@ app.get("/", isloggedIn, async (req, res) => {
 
 
 
-app.post("/", isloggedIn, async (req, res) => {
+app.post("/",jwtAuthentication, isloggedIn, async (req, res) => {
   const [id, followId] = [req.user.id, Number(req.body.follow_id)];
   if (id === followId) {
     res.status(400).send({ message: "users cannot follow himself" })
@@ -44,7 +44,7 @@ app.post("/", isloggedIn, async (req, res) => {
   }
 });
 
-app.get("/:id", isloggedIn, async (req, res) => {
+app.get("/:id",jwtAuthentication, isloggedIn, async (req, res) => {
   const follwingOfFollowing = await followServices.getFollowingOfFollowingByid(
     req.params.id
   );
@@ -57,7 +57,7 @@ app.get("/:id", isloggedIn, async (req, res) => {
   res.send(follwingOfFollowing);
 });
 
-app.get("/data/:id", isloggedIn, async (req, res) => {
+app.get("/data/:id", jwtAuthentication, isloggedIn, async (req, res) => {
   const data = await followServices.getFollowingById(
     req.user.id,
     Number(req.params.id)
@@ -69,7 +69,7 @@ app.get("/data/:id", isloggedIn, async (req, res) => {
   res.send(data);
 });
 
-app.delete("/:id", isloggedIn, async (req, res) => {
+app.delete("/:id",jwtAuthentication, isloggedIn, async (req, res) => {
     console.log("]]]]]]]]]]][[[[[[[[[[[[[",req.params.id)
   const deleted = await followServices.deleteFollowing(req.user.id,Number(req.params.id));
   if (!deleted) {

@@ -1,4 +1,5 @@
 const knex = require("../db");
+const bcrypt=require("bcrypt");
 
 async function createUser(user) {
   // console.log(">>>>>>>>>>PPPPPPP", user);
@@ -15,9 +16,12 @@ async function createUser(user) {
 async function logInUser(username, password) {
   const user = await knex("profile")
     .select()
-    .where({ username, password })
+    .where({ username })
     .first();
-  return user;
+    if(user&& bcrypt.compareSync(password,user.password)){
+      return user;
+    }
+  return null;
 }
 
 async function getUser(id) {
@@ -53,6 +57,7 @@ async function getUserById(id) {
     .select(["name", "username", "mail_id", "dob"])
     .where("id", id)
     .first();
+    console.log("--------info",info)
   return info;
 }
 

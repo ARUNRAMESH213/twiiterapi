@@ -2,9 +2,9 @@ const express = require("express");
 const app = express.Router();
 const followerServices = require("../services/followers_service");
 const userServices = require("../services/user_services");
-const { isloggedIn } = require("../middleware/auth");
+const { isloggedIn, jwtAuthentication } = require("../middleware/auth");
 
-app.get("/", isloggedIn, async (req, res) => {
+app.get("/",jwtAuthentication, isloggedIn, async (req, res) => {
   const followers = await followerServices.getFollowers(req.user.id);
   if (!followers) {
     res.send({ message: "no followers" });
@@ -14,7 +14,7 @@ app.get("/", isloggedIn, async (req, res) => {
 });
 
 
-app.get("/:id", isloggedIn, async (req, res) => {
+app.get("/:id",jwtAuthentication, isloggedIn, async (req, res) => {
   const followersOfFollowers = await followerServices.getFollowersOfFollowersByid  (
     req.params.id
   );
@@ -28,7 +28,7 @@ app.get("/:id", isloggedIn, async (req, res) => {
 });
 
 
-app.get("/data/:id", isloggedIn, async (req, res) => {
+app.get("/data/:id",jwtAuthentication, isloggedIn, async (req, res) => {
   const data = await followerServices.getFollowersById(
     req.user.id,
     Number(req.params.id)
@@ -40,7 +40,7 @@ app.get("/data/:id", isloggedIn, async (req, res) => {
   res.send(data);
 });
 
-app.delete("/:id", isloggedIn, async (req, res) => {
+app.delete("/:id",jwtAuthentication, isloggedIn, async (req, res) => {
  
 const deleted = await followerServices.deleteFollowers (req.user.id,Number(req.params.id));
 if (!deleted) {
